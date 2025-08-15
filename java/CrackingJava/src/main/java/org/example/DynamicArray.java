@@ -37,6 +37,7 @@ public class DynamicArray<T> {
     public int size() {
         return size;
     }
+
     //popBack //remove last element
     public void popBack() {
         if (size == 0) {
@@ -44,6 +45,10 @@ public class DynamicArray<T> {
         }
         size--;
         backingArray[size] = null;
+        //shrink if we are less than 1/4 full
+        if (size < capacity / 4 && capacity > INITIAL_CAPACITY) {
+            shrink();
+        }
     }
     private void grow() {
         T[] newBackingArray = (T[]) new Object[capacity * 2];
@@ -52,5 +57,22 @@ public class DynamicArray<T> {
             newBackingArray[i] = backingArray[i];
         }
         this.backingArray = newBackingArray;
+        this.capacity *= 2;
+    }
+
+    private void shrink() {
+        int newCapacity = Math.max(INITIAL_CAPACITY, capacity / 2);
+        T[] newBackingArray = (T[]) new Object[newCapacity];
+        //copy old elements to new array
+        for (int i = 0; i < size; i++) {
+            newBackingArray[i] = backingArray[i];
+        }
+        this.backingArray = newBackingArray;
+        this.capacity = newCapacity;
+    }
+
+    // Added for testing
+    public int getCapacity() {
+        return capacity;
     }
 }
